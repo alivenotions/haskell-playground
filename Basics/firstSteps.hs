@@ -18,7 +18,7 @@ adderMultiplier ::
         Integer ->
           Integer ->
             Integer
-adderMultiplier f g x y = f (g x y)
+adderMultiplier f g x y = f $ g x y
 
 areaOfCircle :: Float -> Float
 areaOfCircle r = 3.14 * r * r
