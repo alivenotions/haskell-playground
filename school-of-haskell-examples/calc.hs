@@ -4,6 +4,7 @@ import Data.Char
 data Token = TokOp Operator
             | TokIdent String
             | TokNum Int
+            | TokSpace
       deriving (Show, Eq)
 
 data Operator = Plus | Minus | Times | Div
@@ -17,14 +18,18 @@ operator c  | c == '+' = Plus
             | c == '*' = Times
             | c == '/' = Div
 
+tokenizeChar :: Char -> Token
+tokenizeChar c  | elem c "+-*/" = TokOp (operator c)
+                | isDigit c = TokNum (digitToInt c)
+                | isAlpha c = TokIdent [c]
+                | isSpace c = TokSpace
+                | otherwise = error $ "Cannot tokenize " ++ [c]
+
+deleteSpace :: [Token] -> [Token]
+deleteSpace = filter (\t -> t /= TokSpace)
+
 tokenize :: String -> [Token]
-tokenize [] = []
-tokenize (c : cs)
-  | elem c "+-*/" = TokOp (operator c)  : tokenize cs
-  | isDigit c = TokNum (digitToInt c)   : tokenize cs
-  | isAlpha c = TokIdent [c]            : tokenize cs
-  | isSpace c = tokenize cs
-  | otherwise = error $ "Cannot tokenize " ++ [c]
+tokenize = map tokenizeChar
 
 parse :: [Token] -> Expression
 parse = undefined
@@ -33,7 +38,7 @@ evaluate :: Expression -> Double
 evaluate = undefined
 
 main :: IO ()
-main = print $ tokenize " 1 + 4 / x "
+main = print $ deleteSpace $ tokenize " 1 + 4 / x "
 
 
 -- opToStr :: Operator -> String
